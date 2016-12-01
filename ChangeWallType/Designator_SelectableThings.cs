@@ -1,6 +1,7 @@
 ﻿/**
 From https://github.com/UnlimitedHugs/RimworldAllowTool
 */
+
 using System.Collections.Generic;
 using RimWorld;
 using UnityEngine;
@@ -50,7 +51,7 @@ namespace ChangeWallType {
 		// tool selected
 		public override void ProcessInput(Event ev) {
 			base.ProcessInput(ev);
-			//ChangeWallTypeController.Instance.Dragger.;//BeginListening(ThingIsRelevant, def.DragHighlightTex)
+			ChangeWallTypeController.Instance.Dragger.BeginListening(ThingIsRelevant, def.DragHighlightTex);
 		}
 
 		public override void DesignateSingleCell(IntVec3 loc) {
@@ -63,7 +64,7 @@ namespace ChangeWallType {
 
 		public override void DesignateMultiCell(IEnumerable<IntVec3> cells) {
 			var hitCount = 0;
-			foreach (var cell in ChangeWallTypeController.Instance.Dragger.DragCells) {//GetAffectedCells
+			foreach (var cell in ChangeWallTypeController.Instance.Dragger.GetAffectedCells()) {
 				var hits = ProcessCell(cell);
 				hitCount += hits;
 			}

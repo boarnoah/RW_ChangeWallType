@@ -1,12 +1,16 @@
-﻿/*using System.Collections.Generic;
+﻿/**
+From https://github.com/UnlimitedHugs/RimworldAllowTool
+*/
+
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
 namespace ChangeWallType {
-	*//**
+	/**
 	 * This is an alternative DesignationDragger that allows unlimited area selection of selectable things.
 	 * Must be activated on demand by designator that require this functionality.
-	 *//*
+	 */
 	public class UnlimitedDesignationDragger {
 		public delegate bool ThingIsReleveantFilter(Thing item);
 
@@ -85,4 +89,3 @@ namespace ChangeWallType {
 		}
 	}
 }
-*/

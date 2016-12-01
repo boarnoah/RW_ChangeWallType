@@ -1,6 +1,7 @@
 ﻿/**
 From https://github.com/UnlimitedHugs/RimworldAllowTool
 */
+
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -22,27 +23,26 @@ namespace ChangeWallType {
 		private SettingHandle<bool> settingGlobalHotkeys;
 
 		public override string ModIdentifier {
-			get { return "ChangeWallTypeTool"; }
+			get { return "ChangeWallType"; }
 		}
 
 		internal new ModLogger Logger {
 			get { return base.Logger; }
 		}
 		
-		public DesignationDragger Dragger { get; private set; }
+		public UnlimitedDesignationDragger Dragger { get; private set; }
 
 		private ChangeWallTypeController() {
 			Instance = this;
 		}
 		
 		public override void Initalize() {
-			Dragger = new DesignationDragger();
+			Dragger = new UnlimitedDesignationDragger();
 			InitReflectionFields();
 		}
 
 		public override void Update() {
-			//Dragger.Update();
-			Dragger.DraggerUpdate();
+			Dragger.Update();
 		}
 
 		public override void OnGUI() {

@@ -47,7 +47,7 @@ namespace ChangeWallType {
 
 		public override void PostLoad() {
 			Assert(designatorClass != null, "designatorClass field must be set");
-			//Assert(designatorClass != null && typeof (Designator_SelectableThings).IsAssignableFrom(designatorClass), "designatorClass must extend Designator_SelectableThings");
+			Assert(designatorClass != null && typeof(Designator_SelectableThings).IsAssignableFrom(designatorClass), "designatorClass must extend Designator_SelectableThings");
 			Assert(category != null, "category field must be set");
 			Assert(insertAfter != null, "insertAfter field must be set");
 			Assert(iconTex != null, "icon texture must be set");
