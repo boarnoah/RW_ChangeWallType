@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VersionData>
+	<!-- Note, that including this file is optional. -->
+	<!-- Use this to specify the current version of your mod, if updating the version of your assembly is not an option. Used by HugsLib to advertise the current library version, since we cannot change the assembly version without breaking compatibility with implementing mods. Optional. -->
+	<overrideVersion>1.0.0</overrideVersion>
+	<!-- Use this to specify the version of HugsLib you are targeting.
+	See https://github.com/UnlimitedHugs/RimworldHugsLib/tree/master/Mods/HugsLib/About/Version.xml -> overrideVersion for the current version of the library. Optional. -->
+	<requiredLibraryVersion>1.0.0</requiredLibraryVersion>
+</VersionData>

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<KeyBindingDefs>
+	
+	<KeyBindingDef>
+		<category>ChangeWallType</category>
+		<defName>DesignatorChange</defName>
+		<label>Designator: Change</label>
+		<defaultKeyCodeA>U</defaultKeyCodeA>
+	</KeyBindingDef>
+	
+</KeyBindingDefs>

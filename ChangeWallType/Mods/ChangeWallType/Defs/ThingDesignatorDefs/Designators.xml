@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <ChangeWallType.ThingDesignatorDef>
+        <defName>ChangeWallDesignator</defName>
+		<!-- the class that handles the behaviour of this designator. Must extend AllowTool.Designator_SelectableThing -->
+		<designatorClass>ChangeWallType.Designator_ChangeWallType</designatorClass>
+		<!-- the category def name to add this designator to -->
+		<category>Orders</category>
+		<!-- the designator type to insert this designator after -->
+		<insertAfter>Designator_Claim</insertAfter>
+		<!-- the label on the button, optional -->
+        <label>Change Blueprint Material</label>
+		<!-- button tooltip, optional -->
+		<description>Change material of blueprint (walls, doors and embrasures)</description>
+		<!-- the icon texture for the button -->
+		<iconTex>allow</iconTex>
+		<!-- key binding def used to activate the designator, optional -->
+		<hotkeyDef>DesignatorChange</hotkeyDef>
+		<!-- the texture to appear over a tile with items this designator is dragged over -->
+		<dragHighlightTex>allowHighlight</dragHighlightTex>
+		<!-- sound def played after a successful designation -->
+		<soundSucceded>TickHigh</soundSucceded>
+	</ChangeWallType.ThingDesignatorDef>
+</Defs>

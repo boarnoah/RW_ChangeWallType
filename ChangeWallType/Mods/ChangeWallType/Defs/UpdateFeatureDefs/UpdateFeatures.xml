@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<HugsLib.UpdateFeatureDef Abstract="true" Name="UpdateFeatureBase">
+		<defName>UpdateFeature</defName>
+		<modNameReadable>ChangeWallType</modNameReadable>
+		<modIdentifier>ChangeWallType</modIdentifier>
+		<linkUrl>https://ludeon.com/forums/index.php?topic=17218</linkUrl>
+	</HugsLib.UpdateFeatureDef>
+</Defs>
