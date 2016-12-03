@@ -27,7 +27,14 @@ namespace ChangeWallType {
 						GenSpawn.Spawn(replaceBluePrint, thing.Position, thing.Rotation);
 						thing.Destroy(DestroyMode.Cancel);
 					} else if(thing.def.isFrame){
-						//TODO: This
+						Frame replaceFrame = (Frame)ThingMaker.MakeThing(ThingDef.Named(thing.def.defName), ThingDef.Named("BlocksSandstone"));
+						replaceFrame.SetFactionDirect(Faction.OfPlayer);
+						IntVec3 pos = thing.Position;
+						Rot4 rot = thing.Rotation;
+						//Destroys Frame's inner resourceContainer to reclaim resources
+						//Needs to be done before spawning new frame at loc (else resourceContainer goes MIA)
+						thing.Destroy(DestroyMode.Cancel);
+						GenSpawn.Spawn(replaceFrame, pos, rot);
 					}
 
 					hitCount++;
