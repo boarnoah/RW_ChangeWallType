@@ -26,6 +26,7 @@ namespace ChangeWallType {
 				itemStuffCat = item.stuffCategories;
 			}
 			
+			//TODO: Look into stuffProps.canMake (used in Designator_Build float menu construction).
 			return newStuffCat.Intersect(itemStuffCat).Any();
 		}
 
