@@ -7,7 +7,7 @@ Code based on [RimworldAllowTool
 ###Build instructions:
 1.Download [HugsLib](https://github.com/UnlimitedHugs/RimworldHugsLib), extract to RW_ChangeWallType/ext/HugsLib
 
-*  HugsLib has been updated for A16, use fork ([boarnoah/RimworldHugsLib:master](https://github.com/boarnoah/RimworldHugsLib/tree/dev) till mod gets updated
+*  HugsLib has been updated for A16, use fork ([boarnoah/RimworldHugsLib:master](https://github.com/boarnoah/RimworldHugsLib/tree/master)) till mod gets updated
 
 2.Copy Assembly-CSharp.dll and UnityEngine.dll from your RimWorld install (dlls are found at: RimWorld/RimWorldWin_Data/Managed/) to RW_ChangeWallType/dll/
 
