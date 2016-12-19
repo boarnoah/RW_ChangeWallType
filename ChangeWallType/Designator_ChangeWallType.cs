@@ -1,5 +1,6 @@
 ﻿using RimWorld;
 using Verse;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,6 +8,8 @@ namespace ChangeWallType {
 	public class Designator_ChangeWallType : Designator_SelectableThings {
 		public Designator_ChangeWallType(ThingDesignatorDef def) : base(def) {
 		}
+
+		private ThingDef newStuff = null;
 
 		protected override bool ThingIsRelevant(Thing item) {
 			var comp = item is ThingWithComps ? (item as ThingWithComps).GetComp<CompForbiddable>() : null;
@@ -35,8 +38,7 @@ namespace ChangeWallType {
 			var cellThings = Find.ThingGrid.ThingsListAtFast(c);
 			for (var i = 0; i < cellThings.Count; i++) {
 				var thing = cellThings[i];
-				if (thing.def.selectable && (thing.Faction == Faction.OfPlayer)) {
-					ThingDef newStuff = ThingDef.Named("BlocksSandstone");
+				if (thing.def.selectable && (thing.Faction == Faction.OfPlayer) && newStuff != null) {
                     if (canUseStuff(newStuff, thing.def)) {
 						if (thing.def.IsBlueprint) {
 							Blueprint_Build replaceBluePrint = (Blueprint_Build)ThingMaker.MakeThing(ThingDef.Named(thing.def.defName), null);
@@ -59,6 +61,35 @@ namespace ChangeWallType {
 				}
 			}
 			return hitCount;
+		}
+
+		public override void ProcessInput(Event Ev) {
+			base.ProcessInput(Ev);
+
+			//Right click Stuff Menu
+			List<FloatMenuOption> options = new List<FloatMenuOption>();
+			using (Dictionary<ThingDef, int>.KeyCollection.Enumerator enumerator = Find.ResourceCounter.AllCountedAmounts.Keys.GetEnumerator()) {
+				while (enumerator.MoveNext()) {
+					ThingDef current = enumerator.Current;
+					//TODO: Better check to identify "buildable" materials
+					if (current.IsStuff && current.stuffProps.CanMake(ThingDef.Named("Wall"))) {
+						options.Add(new FloatMenuOption(current.LabelCap, new System.Action(() => {
+							newStuff = current;
+                        }), MenuOptionPriority.Medium, null, null, 0.0f, null) {
+							tutorTag = current.defName
+						});
+					}
+				}
+			}
+
+			if (options.Count == 0) {
+				//TODO: msg + localisation, shouldn't happen ever (?)
+				Messages.Message("No materials found to designate with (is Rimworld Core loaded?)", MessageSound.RejectInput);
+			} else {
+				Find.WindowStack.Add((Window)new FloatMenu(options) {
+					vanishIfMouseDistant = true
+				});
+			}
 		}
 	}
 }

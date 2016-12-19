@@ -52,30 +52,6 @@ namespace ChangeWallType {
 		public override void ProcessInput(Event ev) {
 			base.ProcessInput(ev);
 			ChangeWallTypeController.Instance.Dragger.BeginListening(ThingIsRelevant, def.DragHighlightTex);
-			
-			List<FloatMenuOption> options = new List<FloatMenuOption>();
-			using (Dictionary<ThingDef, int>.KeyCollection.Enumerator enumerator = Find.ResourceCounter.AllCountedAmounts.Keys.GetEnumerator()) {
-				while (enumerator.MoveNext()) {
-					ThingDef current = enumerator.Current;
-					if (current.IsStuff && current.stuffProps.CanMake(ThingDef.Named("Wall"))) {
-						options.Add(new FloatMenuOption(current.LabelCap, new System.Action(() => {
-							//TODO: Refactor and implement to change block type
-							Log.Message("ITEM? " + current.defName);
-						}), MenuOptionPriority.Medium, null, null, 0.0f, null) {
-							tutorTag = current.defName
-						});
-					}
-                }
-			}
-
-			if (options.Count == 0) {
-				Messages.Message("NoStuffsToBuildWith", MessageSound.RejectInput);
-			} else {
-				Find.WindowStack.Add((Window)new FloatMenu(options) {
-					vanishIfMouseDistant = true
-				});
-				//DesignatorManager.Select((Designator)this);
-			}
 		}
 
 		public override void DesignateSingleCell(IntVec3 loc) {
