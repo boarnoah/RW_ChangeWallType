@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeWallType", "ChangeWallType\ChangeWallType.csproj", "{6C17D963-5435-4BBC-8A8A-F16B8B36DBC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HugsLib", "ext\HugsLib\HugsLib.csproj", "{A5D9BD45-533C-4CA0-9298-8950A3DA724C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RimworldHugsLib", "ext\RimworldHugsLib\HugsLib.csproj", "{A5D9BD45-533C-4CA0-9298-8950A3DA724C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
