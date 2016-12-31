@@ -35,7 +35,7 @@ namespace ChangeWallType {
 
 		override protected int ProcessCell(IntVec3 c) {
 			var hitCount = 0;
-			var cellThings = Find.ThingGrid.ThingsListAtFast(c);
+			var cellThings = Find.VisibleMap.thingGrid.ThingsListAtFast(c);
 			for (var i = 0; i < cellThings.Count; i++) {
 				var thing = cellThings[i];
 				if (thing.def.selectable && (thing.Faction == Faction.OfPlayer) && newStuff != null) {
@@ -44,17 +44,18 @@ namespace ChangeWallType {
 							Blueprint_Build replaceBluePrint = (Blueprint_Build)ThingMaker.MakeThing(ThingDef.Named(thing.def.defName), null);
 							replaceBluePrint.SetFactionDirect(Faction.OfPlayer);
 							replaceBluePrint.stuffToUse = newStuff;
-							GenSpawn.Spawn(replaceBluePrint, thing.Position, thing.Rotation);
+							GenSpawn.Spawn(replaceBluePrint, thing.Position, thing.Map, thing.Rotation);
 							thing.Destroy(DestroyMode.Cancel);
 						} else if (thing.def.isFrame) {
 							Frame replaceFrame = (Frame)ThingMaker.MakeThing(ThingDef.Named(thing.def.defName), newStuff);
 							replaceFrame.SetFactionDirect(Faction.OfPlayer);
 							IntVec3 pos = thing.Position;
+							Map map = thing.Map;
 							Rot4 rot = thing.Rotation;
 							//Destroys Frame's inner resourceContainer to reclaim resources
 							//Needs to be done before spawning new frame at loc (else resourceContainer goes MIA)
 							thing.Destroy(DestroyMode.Cancel);
-							GenSpawn.Spawn(replaceFrame, pos, rot);
+							GenSpawn.Spawn(replaceFrame, pos, map, rot);
 						}
 						hitCount++;
 					}
@@ -68,14 +69,14 @@ namespace ChangeWallType {
 
 			//Right click Stuff Menu
 			List<FloatMenuOption> options = new List<FloatMenuOption>();
-			using (Dictionary<ThingDef, int>.KeyCollection.Enumerator enumerator = Find.ResourceCounter.AllCountedAmounts.Keys.GetEnumerator()) {
+			using (Dictionary<ThingDef, int>.KeyCollection.Enumerator enumerator = Find.VisibleMap.resourceCounter.AllCountedAmounts.Keys.GetEnumerator()) {
 				while (enumerator.MoveNext()) {
 					ThingDef current = enumerator.Current;
 					//TODO: Better check to identify "buildable" materials
 					if (current.IsStuff && current.stuffProps.CanMake(ThingDef.Named("Wall"))) {
 						options.Add(new FloatMenuOption(current.LabelCap, new System.Action(() => {
 							newStuff = current;
-                        }), MenuOptionPriority.Medium, null, null, 0.0f, null) {
+                        }), MenuOptionPriority.Default, null, null, 0.0f, null) {
 							tutorTag = current.defName
 						});
 					}

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using HugsLib;
 using HugsLib.Settings;
+using HugsLib.Utils;
 using UnityEngine;
 using Verse;
 
@@ -36,7 +37,7 @@ namespace ChangeWallType {
 			Instance = this;
 		}
 		
-		public override void Initalize() {
+		public override void Initialize() {
 			Dragger = new UnlimitedDesignationDragger();
 			InitReflectionFields();
 		}
@@ -46,20 +47,21 @@ namespace ChangeWallType {
 		}
 
 		public override void OnGUI() {
+			if (Current.Game == null || Current.Game.VisibleMap == null) return;
+			var selectedDesignator = Find.MapUI.designatorManager.SelectedDesignator;
 			for (int i = 0; i < activeDesignators.Count; i++) {
 				var designator = activeDesignators[i].designator;
-				if (DesignatorManager.SelectedDesignator != designator) continue;
+				if (selectedDesignator != designator) continue;
 				designator.SelectedOnGUI();
 			}
-			if(Event.current.type != EventType.KeyDown || Current.ProgramState != ProgramState.MapPlaying) return;
-			CheckForHotkeyPresses();
+			if (Event.current.type == EventType.KeyDown) {
+				CheckForHotkeyPresses();
+			}
 		}
 		
 		public override void DefsLoaded() {
-			LongEventHandler.ExecuteWhenFinished(() => {
-				InjectDesignators(); // DesignationCategoryDef has delayed designator resolution, so we do, too
-				PrepareSettingsHandles();
-			}); 
+			LongEventHandler.ExecuteWhenFinished(InjectDesignators); // DesignationCategoryDef has delayed designator resolution, so we do, too
+			PrepareSettingsHandles();
 		}
 
 		public override void SettingsChanged() {
@@ -107,7 +109,7 @@ namespace ChangeWallType {
 		}
 		
 		private void CheckForHotkeyPresses() {
-			if (!settingGlobalHotkeys) return;
+			if (!settingGlobalHotkeys || Find.VisibleMap == null) return;
 			for (int i = 0; i < activeDesignators.Count; i++) {
 				var entry = activeDesignators[i];
 				if(entry.key == null || !entry.key.JustPressed || !entry.visibilitySetting.Value) continue;
