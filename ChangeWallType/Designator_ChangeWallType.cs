@@ -75,15 +75,23 @@ namespace ChangeWallType {
 			//Right click Stuff Menu
 			List<FloatMenuOption> options = new List<FloatMenuOption>();
 			using (Dictionary<ThingDef, int>.KeyCollection.Enumerator enumerator = Find.VisibleMap.resourceCounter.AllCountedAmounts.Keys.GetEnumerator()) {
-				while (enumerator.MoveNext()) {
+				bool showUnstocked = ChangeWallTypeController.Instance.showUnstockedMaterials;
+                while (enumerator.MoveNext()) {
 					ThingDef current = enumerator.Current;
 					//TODO: Better check to identify "buildable" materials
 					if (current.IsStuff && current.stuffProps.CanMake(ThingDef.Named("Wall"))) {
-						options.Add(new FloatMenuOption(current.LabelCap, new System.Action(() => {
-							newStuff = current;
-                        }), MenuOptionPriority.Default, null, null, 0.0f, null) {
-							tutorTag = current.defName
-						});
+						bool includeItem = false;
+
+						if (!showUnstocked)
+							includeItem = Find.VisibleMap.resourceCounter.GetCount(current) > 0;
+
+						if (includeItem) {
+							options.Add(new FloatMenuOption(current.LabelCap, new System.Action(() => {
+								newStuff = current;
+							}), MenuOptionPriority.Default, null, null, 0.0f, null) {
+								tutorTag = current.defName
+							});
+						}
 					}
 				}
 			}

@@ -21,13 +21,19 @@ namespace ChangeWallType {
 		public static ChangeWallTypeController Instance { get; private set; }
 
 		private readonly List<DesignatorEntry> activeDesignators = new List<DesignatorEntry>();
-		private SettingHandle<bool> settingGlobalHotkeys;
 
+		private SettingHandle<bool> settingGlobalHotkeys;
+		private SettingHandle<bool> settingShowUnstockedMaterials;
+		
 		public override string ModIdentifier {
 			get { return "ChangeWallType"; }
 		}
 
-		internal new ModLogger Logger {
+		public bool showUnstockedMaterials {
+			get { return settingShowUnstockedMaterials; }
+		}
+
+        internal new ModLogger Logger {
 			get { return base.Logger; }
 		}
 		
@@ -106,7 +112,8 @@ namespace ChangeWallType {
 
 		private void PrepareSettingsHandles() {
 			settingGlobalHotkeys = Settings.GetHandle("globalHotkeys", "setting_globalHotkeys_label".Translate(), "setting_globalHotkeys_desc".Translate(), true);
-		}
+			settingShowUnstockedMaterials = Settings.GetHandle("showUnstockedMaterials", "Include unstocked materials", "Show materials with 0 stocked", true);
+        }
 		
 		private void CheckForHotkeyPresses() {
 			if (!settingGlobalHotkeys || Find.VisibleMap == null) return;
