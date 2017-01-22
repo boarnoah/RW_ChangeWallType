@@ -5,5 +5,5 @@
 	<overrideVersion>1.0.0</overrideVersion>
 	<!-- Use this to specify the version of HugsLib you are targeting.
 	See https://github.com/UnlimitedHugs/RimworldHugsLib/tree/master/Mods/HugsLib/About/Version.xml -> overrideVersion for the current version of the library. Optional. -->
-	<requiredLibraryVersion>2.2.2</requiredLibraryVersion>
+	<requiredLibraryVersion>2.3.3</requiredLibraryVersion>
 </VersionData>

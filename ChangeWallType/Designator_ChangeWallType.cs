@@ -20,6 +20,7 @@ namespace ChangeWallType {
 		bool canUseStuff(ThingDef newMaterial, ThingDef item) {
 			List<StuffCategoryDef> newStuffCat = newMaterial.stuffProps.categories;
 			List<StuffCategoryDef> itemStuffCat = new List<StuffCategoryDef>();
+			bool canUse = false;
 
 			if (item.IsBlueprint) {
 				//Get item def name from blueprint def ("Wall_Blueprint" -> "Wall")
@@ -29,8 +30,12 @@ namespace ChangeWallType {
 				itemStuffCat = item.stuffCategories;
 			}
 			
+			//Skips if item's has no buildable material list (ex: Power Generator)
+			if(itemStuffCat != null)
+				canUse = newStuffCat.Intersect(itemStuffCat).Any();
+
 			//TODO: Look into stuffProps.canMake (used in Designator_Build float menu construction).
-			return newStuffCat.Intersect(itemStuffCat).Any();
+			return canUse;
 		}
 
 		override protected int ProcessCell(IntVec3 c) {
