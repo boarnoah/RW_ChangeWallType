@@ -9,15 +9,15 @@ namespace ChangeWallType {
 		public Designator_ChangeWallType(ThingDesignatorDef def) : base(def) {
 		}
 
-		private ThingDef newStuff = null;
+		private ThingDef _newStuff;
 
 		protected override bool ThingIsRelevant(Thing item) {
-			var comp = item is ThingWithComps ? (item as ThingWithComps).GetComp<CompForbiddable>() : null;
+			var comp = (item as ThingWithComps)?.GetComp<CompForbiddable>();
 			//TODO: Only highlight player faction's blueprints
 			return comp != null && (comp.parent.def.IsBlueprint || comp.parent.def.isFrame);
 		}
 
-		bool canUseStuff(ThingDef newMaterial, ThingDef item) {
+		bool CanUseStuff(ThingDef newMaterial, ThingDef item) {
 			List<StuffCategoryDef> newStuffCat = newMaterial.stuffProps.categories;
 			List<StuffCategoryDef> itemStuffCat = new List<StuffCategoryDef>();
 			bool canUse = false;
@@ -38,21 +38,21 @@ namespace ChangeWallType {
 			return canUse;
 		}
 
-		override protected int ProcessCell(IntVec3 c) {
+		protected override int ProcessCell(IntVec3 c) {
 			var hitCount = 0;
 			var cellThings = Find.VisibleMap.thingGrid.ThingsListAtFast(c);
-			for (var i = 0; i < cellThings.Count; i++) {
-				var thing = cellThings[i];
-				if (thing.def.selectable && (thing.Faction == Faction.OfPlayer) && newStuff != null) {
-                    if (canUseStuff(newStuff, thing.def)) {
+			foreach (var thing in cellThings)
+			{
+				if (thing.def.selectable && (thing.Faction == Faction.OfPlayer) && _newStuff != null) {
+					if (CanUseStuff(_newStuff, thing.def)) {
 						if (thing.def.IsBlueprint) {
-							Blueprint_Build replaceBluePrint = (Blueprint_Build)ThingMaker.MakeThing(ThingDef.Named(thing.def.defName), null);
+							Blueprint_Build replaceBluePrint = (Blueprint_Build)ThingMaker.MakeThing(ThingDef.Named(thing.def.defName));
 							replaceBluePrint.SetFactionDirect(Faction.OfPlayer);
-							replaceBluePrint.stuffToUse = newStuff;
+							replaceBluePrint.stuffToUse = _newStuff;
 							GenSpawn.Spawn(replaceBluePrint, thing.Position, thing.Map, thing.Rotation);
 							thing.Destroy(DestroyMode.Cancel);
 						} else if (thing.def.isFrame) {
-							Frame replaceFrame = (Frame)ThingMaker.MakeThing(ThingDef.Named(thing.def.defName), newStuff);
+							Frame replaceFrame = (Frame)ThingMaker.MakeThing(ThingDef.Named(thing.def.defName), _newStuff);
 							replaceFrame.SetFactionDirect(Faction.OfPlayer);
 							IntVec3 pos = thing.Position;
 							Map map = thing.Map;
@@ -69,26 +69,26 @@ namespace ChangeWallType {
 			return hitCount;
 		}
 
-		public override void ProcessInput(Event Ev) {
-			base.ProcessInput(Ev);
+		public override void ProcessInput(Event ev) {
+			base.ProcessInput(ev);
 
 			//Right click Stuff Menu
 			List<FloatMenuOption> options = new List<FloatMenuOption>();
 			using (Dictionary<ThingDef, int>.KeyCollection.Enumerator enumerator = Find.VisibleMap.resourceCounter.AllCountedAmounts.Keys.GetEnumerator()) {
-				bool showUnstocked = ChangeWallTypeController.Instance.showUnstockedMaterials;
+				bool showUnstocked = ChangeWallTypeController.Instance.ShowUnstockedMaterials;
                 while (enumerator.MoveNext()) {
 					ThingDef current = enumerator.Current;
 					//TODO: Better check to identify "buildable" materials
-					if (current.IsStuff && current.stuffProps.CanMake(ThingDef.Named("Wall"))) {
+					if (current != null && (current.IsStuff && current.stuffProps.CanMake(ThingDef.Named("Wall")))) {
 						bool includeItem = false;
 
 						if (!showUnstocked)
 							includeItem = Find.VisibleMap.resourceCounter.GetCount(current) > 0;
 
 						if (includeItem) {
-							options.Add(new FloatMenuOption(current.LabelCap, new System.Action(() => {
-								newStuff = current;
-							}), MenuOptionPriority.Default, null, null, 0.0f, null) {
+							options.Add(new FloatMenuOption(current.LabelCap, () => {
+								_newStuff = current;
+							}) {
 								tutorTag = current.defName
 							});
 						}
@@ -100,7 +100,7 @@ namespace ChangeWallType {
 				//TODO: msg + localisation, shouldn't happen ever (?)
 				Messages.Message("No materials found to designate with (is Rimworld Core loaded?)", MessageSound.RejectInput);
 			} else {
-				Find.WindowStack.Add((Window)new FloatMenu(options) {
+				Find.WindowStack.Add(new FloatMenu(options) {
 					vanishIfMouseDistant = true
 				});
 			}

@@ -17,26 +17,20 @@ namespace ChangeWallType {
 	 * Injects the custom designators and handles hotkey presses.
 	 */
 	public class ChangeWallTypeController : ModBase {
-		private static FieldInfo resolvedDesignatorsField;
+		private static FieldInfo _resolvedDesignatorsField;
 		public static ChangeWallTypeController Instance { get; private set; }
 
-		private readonly List<DesignatorEntry> activeDesignators = new List<DesignatorEntry>();
+		private readonly List<DesignatorEntry> _activeDesignators = new List<DesignatorEntry>();
 
-		private SettingHandle<bool> settingGlobalHotkeys;
-		private SettingHandle<bool> settingShowUnstockedMaterials;
+		private SettingHandle<bool> _settingGlobalHotkeys;
+		private SettingHandle<bool> _settingShowUnstockedMaterials;
 		
-		public override string ModIdentifier {
-			get { return "ChangeWallType"; }
-		}
+		public override string ModIdentifier => "ChangeWallType";
 
-		public bool showUnstockedMaterials {
-			get { return settingShowUnstockedMaterials; }
-		}
+		public bool ShowUnstockedMaterials => _settingShowUnstockedMaterials;
 
-        internal new ModLogger Logger {
-			get { return base.Logger; }
-		}
-		
+		internal new ModLogger Logger => base.Logger;
+
 		public UnlimitedDesignationDragger Dragger { get; private set; }
 
 		private ChangeWallTypeController() {
@@ -55,8 +49,9 @@ namespace ChangeWallType {
 		public override void OnGUI() {
 			if (Current.Game == null || Current.Game.VisibleMap == null) return;
 			var selectedDesignator = Find.MapUI.designatorManager.SelectedDesignator;
-			for (int i = 0; i < activeDesignators.Count; i++) {
-				var designator = activeDesignators[i].designator;
+			foreach (DesignatorEntry t in _activeDesignators)
+			{
+				var designator = t.Designator;
 				if (selectedDesignator != designator) continue;
 				designator.SelectedOnGUI();
 			}
@@ -71,17 +66,17 @@ namespace ChangeWallType {
 		}
 
 		public override void SettingsChanged() {
-			foreach (var entry in activeDesignators) {
-				entry.designator.SetVisible(entry.visibilitySetting.Value);
+			foreach (var entry in _activeDesignators) {
+				entry.Designator.SetVisible(entry.VisibilitySetting.Value);
 			}
 		}
 
 		private void InjectDesignators() {
-			activeDesignators.Clear();
+			_activeDesignators.Clear();
 			var numDesignatorsInjected = 0;
 			foreach (var designatorDef in DefDatabase<ThingDesignatorDef>.AllDefs) {
 				if (designatorDef.Injected) continue;
-				var resolvedDesignators = (List<Designator>)resolvedDesignatorsField.GetValue(designatorDef.Category);
+				var resolvedDesignators = (List<Designator>)_resolvedDesignatorsField.GetValue(designatorDef.Category);
 				var insertIndex = -1;
 				for (var i = 0; i < resolvedDesignators.Count; i++) {
 					if(resolvedDesignators[i].GetType() != designatorDef.insertAfter) continue;
@@ -93,7 +88,7 @@ namespace ChangeWallType {
 					resolvedDesignators.Insert(insertIndex + 1, designator);
 					var handle = Settings.GetHandle("show" + designatorDef.defName, "setting_showTool_label".Translate(designatorDef.label), null, true);
 					designator.SetVisible(handle.Value);
-					activeDesignators.Add(new DesignatorEntry(designator, designatorDef.hotkeyDef, handle));
+					_activeDesignators.Add(new DesignatorEntry(designator, designatorDef.hotkeyDef, handle));
 					numDesignatorsInjected++;
 				} else {
 					Logger.Error(string.Format("Failed to inject {0} after {1}", designatorDef.defName, designatorDef.insertAfter.Name));		
@@ -106,33 +101,34 @@ namespace ChangeWallType {
 		}
 
 		private void InitReflectionFields() {
-			resolvedDesignatorsField = typeof (DesignationCategoryDef).GetField("resolvedDesignators", BindingFlags.NonPublic | BindingFlags.Instance);
-			if (resolvedDesignatorsField == null) Logger.Error("failed to reflect DesignationCategoryDef.resolvedDesignators");
+			_resolvedDesignatorsField = typeof (DesignationCategoryDef).GetField("resolvedDesignators", BindingFlags.NonPublic | BindingFlags.Instance);
+			if (_resolvedDesignatorsField == null) Logger.Error("failed to reflect DesignationCategoryDef.resolvedDesignators");
 		}
 
 		private void PrepareSettingsHandles() {
-			settingGlobalHotkeys = Settings.GetHandle("globalHotkeys", "setting_globalHotkeys_label".Translate(), "setting_globalHotkeys_desc".Translate(), true);
-			settingShowUnstockedMaterials = Settings.GetHandle("showUnstockedMaterials", "Include unstocked materials", "Show materials with 0 stocked", true);
+			_settingGlobalHotkeys = Settings.GetHandle("globalHotkeys", "setting_globalHotkeys_label".Translate(), "setting_globalHotkeys_desc".Translate(), true);
+			_settingShowUnstockedMaterials = Settings.GetHandle("showUnstockedMaterials", "Include unstocked materials", "Show materials with 0 stocked", true);
         }
 		
-		private void CheckForHotkeyPresses() {
-			if (!settingGlobalHotkeys || Find.VisibleMap == null) return;
-			for (int i = 0; i < activeDesignators.Count; i++) {
-				var entry = activeDesignators[i];
-				if(entry.key == null || !entry.key.JustPressed || !entry.visibilitySetting.Value) continue;
-				activeDesignators[i].designator.ProcessInput(Event.current);
+		private void CheckForHotkeyPresses()
+		{
+			if (!_settingGlobalHotkeys || Find.VisibleMap == null) return;
+			foreach (DesignatorEntry entry in _activeDesignators)
+			{
+				if(entry.Key == null || !entry.Key.JustPressed || !entry.VisibilitySetting.Value) continue;
+				entry.Designator.ProcessInput(Event.current);
 				break;
 			}
 		}
 		
 		private class DesignatorEntry {
-			public readonly Designator_SelectableThings designator;
-			public readonly KeyBindingDef key;
-			public readonly SettingHandle<bool> visibilitySetting;
+			public readonly Designator_SelectableThings Designator;
+			public readonly KeyBindingDef Key;
+			public readonly SettingHandle<bool> VisibilitySetting;
 			public DesignatorEntry(Designator_SelectableThings designator, KeyBindingDef key, SettingHandle<bool> visibilitySetting) {
-				this.designator = designator;
-				this.key = key;
-				this.visibilitySetting = visibilitySetting;
+				Designator = designator;
+				Key = key;
+				VisibilitySetting = visibilitySetting;
 			}
 		}
 	}
