@@ -40,7 +40,9 @@ namespace ChangeWallType {
 		protected override int ProcessCell(IntVec3 c) {
 			var hitCount = 0;
 			var cellThings = Find.VisibleMap.thingGrid.ThingsListAtFast(c);
-			foreach (var thing in cellThings) {
+	
+			for(int i = 0; i < cellThings.Count; i++) {
+				var thing = cellThings[i];
 				if (thing.def.selectable && (thing.Faction == Faction.OfPlayer) && _newStuff != null) {
 					if (CanUseStuff(_newStuff, thing.def)) {
 						if (thing.def.IsBlueprint) {
@@ -80,7 +82,7 @@ namespace ChangeWallType {
 					ThingDef current = enumerator.Current;
 					//TODO: Better check to identify "buildable" materials
 					if (current != null && (current.IsStuff && current.stuffProps.CanMake(ThingDef.Named("Wall")))) {
-						bool includeItem = false;
+						bool includeItem = true;
 
 						if (!showUnstocked)
 							includeItem = Find.VisibleMap.resourceCounter.GetCount(current) > 0;
@@ -93,7 +95,7 @@ namespace ChangeWallType {
 			}
 
 			if (options.Count == 0) {
-				//TODO: msg + localisation, shouldn't happen ever (?)
+				//TODO: Change to no materials found (triggers when nothing in stock)
 				Messages.Message("No materials found to designate with (is Rimworld Core loaded?)", MessageSound.RejectInput);
 			} else {
 				Find.WindowStack.Add(new FloatMenu(options) {vanishIfMouseDistant = true});

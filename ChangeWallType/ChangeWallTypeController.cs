@@ -98,7 +98,7 @@ namespace ChangeWallType {
 					_activeDesignators.Add(new DesignatorEntry(designator, designatorDef.hotkeyDef, handle));
 					numDesignatorsInjected++;
 				} else {
-					Logger.Error($"Failed to inject {designatorDef.defName} after {designatorDef.insertAfter.Name}");
+					Logger.Error("Failed to inject " + designatorDef.defName + " after " + designatorDef.insertAfter.Name);
 				}
 				designatorDef.Injected = true;
 			}
